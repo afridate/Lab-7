@@ -1,35 +1,41 @@
 import requests
 
 
-def analyze(text_to_analyze):
-    url = 'http://api.text2data.com/v3/analyze'
-    payload = {
-        'DocumentText': f'{text_to_analyze}', 
-        'IsTwitterContent': 'false',
-        'PrivateKey': '94B27606-BF53-415D-B690-A45D611DF7C9', #add your private key here (you can find it in the admin panel once you sign-up)
-        'Secret':'123', #this should be set-up in admin panel as well
-        'RequestIdentifier': '' #optional, used for reporting context
-    }
- 
-    r = requests.post(url, data=payload)
-    data=r.json()
+def get_news(request_url):
+    response = requests.get(request_url)
+    data = response.json()
     print(data)
 
 
-while True:
-    site = input('1 - cats, 2 - logos, 0 - exit: ')
-    match site:
-        case '1':
-            response = requests.get('https://meowfacts.herokuapp.com')
-            response = response.json()
-            analyze(response['data'])
+key = "308395f04a374fac9dd57310d7648847"
 
-        case '2':
-            response = requests.get('https://www.logotypes.dev/random/data')
-            response = response.json()
-            analyze(response['example_description'])
-        
-        case '0':
+while True:
+    option = input(
+        "1 - top headlines for a country, "
+        "2 - top headlines by source, "
+        "3 - search by keyword, "
+        "0 - exit: "
+    )
+
+    match option:
+        case "1":
+            country = input("Enter country: ")
+            url = f"https://newsapi.org/v2/top-headlines?country={country}&apiKey={key}"
+            get_news(url)
+
+        case "2":
+            source = input("Enter source: ")
+            url = f"https://newsapi.org/v2/top-headlines?sources={source}&apiKey={key}"
+            get_news(url)
+
+        case "3":
+            keyword = input("Enter keyword: ")
+            date = input("Enter date (YYYY-MM-DD): ")
+            sort = input("Sort by: ")
+            url = f"https://newsapi.org/v2/everything?q={keyword}&from={date}&sortBy={sort}&apiKey={key}"
+            get_news(url)
+
+        case "0":
             break
 
         case _:
